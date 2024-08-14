@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: mIcho---2021
+      MYSQL_DATABASE: taskaManagerDb
+      MYSQL_USER: user
+      MYSQL_PASSWORD: mIcho---2021
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - task-manager-network
+
+  backend:
+    build: ./tm-backend
+    container_name: tm-backend
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/taskaManagerDb
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: mIcho---2021
+    depends_on:
+      - mysql
+    networks:
+      - task-manager-network
+
+  frontend:
+    build: ./task-management
+    container_name: task-management
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    networks:
+      - task-manager-network
+
+networks:
+  task-manager-network:
+
+volumes:
+  mysql_data:
